@@ -1,0 +1,41 @@
+# .github/workflows/pruebas_cobertura.yml
+name: Integración y Cobertura de Código
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 1. Clonar Repositorio
+        uses: actions/checkout@v4
+
+      - name: 2. Construir y Levantar Contenedores Docker
+        # Usa el Dockerfile modificado y el docker-compose.yml
+        run: docker-compose up -d --build
+
+      - name: 3. Esperar que la Base de Datos (granferia_db) esté Lista
+        # Damos tiempo a MySQL para iniciar, crucial para la prueba de conexión
+        run: sleep 15 
+
+      - name: 4. Ejecutar Pruebas PHPUnit y Generar Reporte de Cobertura (coverage.xml)
+        # Comando para ejecutar las pruebas dentro del contenedor 'granferia_web'
+        run: docker exec granferia_web phpunit --configuration phpunit.xml
+
+      - name: 5. Subir Reporte a Codecov
+        # Usa la acción de Codecov para enviar el archivo generado
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml 
+          # El token de Codecov DEBE estar configurado como secreto en GitHub
+          token: ${{ secrets.CODECOV_TOKEN }} 
+          verbose: true
+
+      - name: 6. Detener Contenedores (Limpieza)
+        # Detiene y elimina los contenedores creados
+        run: docker-compose down

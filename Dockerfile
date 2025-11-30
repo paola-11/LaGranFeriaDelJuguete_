@@ -1,14 +1,25 @@
-# Imagen base con PHP y Apache
+# Dockerfile modificado (Raíz del proyecto)
+# ... (código existente)
 FROM php:8.2-apache
 
 # Instalar extensiones necesarias
 RUN docker-php-ext-install mysqli pdo pdo_mysql
 
-# Copiar los archivos del proyecto al contenedor
-COPY . /var/www/html/
+# --- PASO 1: INSTALAR HERRAMIENTAS DE PRUEBA (PHPUnit y Xdebug) ---
+# Instalar utilidades (wget, git)
+RUN apt-get update && apt-get install -y \
+    wget \
+    git \
+    libxml2-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Asignar permisos correctos
-RUN chown -R www-data:www-data /var/www/html
+# Instalar Xdebug (necesario para generar el reporte de cobertura)
+RUN pecl install xdebug \
+    && docker-php-ext-enable xdebug
 
-# Exponer el puerto 80 (para Apache)
-EXPOSE 80
+# Instalar PHPUnit (herramienta de pruebas)
+RUN wget -q -O /usr/local/bin/phpunit https://phar.phpunit.de/phpunit.phar \
+    && chmod +x /usr/local/bin/phpunit
+# --- FIN DE INSTALACIÓN DE PRUEBAS ---
+
+# ... (código existente: COPY . /var/www/html/, etc.)
