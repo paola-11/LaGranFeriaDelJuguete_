@@ -1,23 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
-         colors="true"
->
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.6/phpunit.xsd"
+         colors="true">
+
     <testsuites>
         <testsuite name="Pruebas Unitarias La Gran Feria del Juguete">
             <directory>tests</directory>
         </testsuite>
     </testsuites>
 
-    <coverage processUncoveredFiles="true">
-        <include>
+    <!-- Configuración de cobertura compatible con PHPUnit 9 -->
+    <filter>
+        <whitelist processUncoveredFiles="true">
             <directory suffix=".php">funciones</directory>
-        </include>
-        <exclude>
-            <file>funciones/conexion.php</file>
-            <file>funciones/login.php</file>
-            <file>funciones/registro.php</file>
-        </exclude>
-        <clover outputFile="coverage.xml"/>
-    </coverage>
+
+            <exclude>
+                <file>funciones/conexion.php</file>
+                <file>funciones/login.php</file>
+                <file>funciones/registro.php</file>
+            </exclude>
+        </whitelist>
+    </filter>
+
+    <logging>
+        <log type="coverage-clover" target="coverage.xml" />
+    </logging>
+
 </phpunit>
