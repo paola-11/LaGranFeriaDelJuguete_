@@ -18,7 +18,8 @@ RUN echo "zend_extension=xdebug.so" > /usr/local/etc/php/conf.d/xdebug.ini \
     && echo "xdebug.mode=coverage" >> /usr/local/etc/php/conf.d/xdebug.ini \
     && echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/xdebug.ini
 
-RUN wget -q -O /usr/local/bin/phpunit https://phar.phpunit.de/phpunit.phar \
+# Instalamos PHPUnit compatible con PHP 8.2 (v10.5)
+RUN wget -q -O /usr/local/bin/phpunit https://phar.phpunit.de/phpunit-10.5.phar \
     && chmod +x /usr/local/bin/phpunit
 
 COPY . /var/www/html/
