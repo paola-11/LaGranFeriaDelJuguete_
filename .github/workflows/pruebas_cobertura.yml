@@ -26,7 +26,7 @@ jobs:
         run: docker exec granferia_db sh -c 'exec mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS granferia;"'
 
       - name: 5. Cargar Base de Datos (Esquema y Datos)
-        run: docker exec granferia_db sh -c 'exec mysql -uroot -proot granferia < database.sql'
+        run: cat database.sql | docker exec -i granferia_db mysql -uroot -proot granferia
 
       - name: 6. Ejecutar Pruebas PHPUnit y Generar Reporte de Cobertura
         run: docker exec granferia_web phpunit --configuration phpunit.xml --coverage-clover coverage.xml
