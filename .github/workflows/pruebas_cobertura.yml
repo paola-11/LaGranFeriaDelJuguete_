@@ -17,27 +17,23 @@ jobs:
         uses: actions/checkout@v3
 
       - name: 2. Construir y Levantar Contenedores Docker
-        run: docker-compose up -d --build
+        run: docker compose up -d --build
 
       - name: 3. Esperar que la Base de Datos esté lista
-        # Es necesario esperar unos segundos a que MySQL inicie completamente.
-        run: sleep 15 
+        run: sleep 15
 
-      - name: 4. Crear Base de Datos 'granferia' 🟢 NUEVO PASO
-        # Creamos la base de datos de forma explícita para evitar el error "Unknown database".
+      - name: 4. Crear Base de Datos 'granferia'
         run: docker exec granferia_db sh -c 'exec mysql -uroot -proot -e "CREATE DATABASE granferia;"'
 
       - name: 5. Cargar Base de Datos (Esquema y Datos)
-        # Ahora que la DB existe, cargamos el esquema SQL.
         run: docker exec granferia_db sh -c 'exec mysql -uroot -proot granferia < database.sql'
 
       - name: 6. Ejecutar Pruebas PHPUnit y Generar Reporte de Cobertura
-        # Ejecuta PHPUnit dentro del contenedor 'web'.
         run: docker exec granferia_web phpunit --configuration phpunit.xml --coverage-clover coverage.xml
 
       - name: 7. Subir Reporte a Codecov
         uses: codecov/codecov-action@v3
         with:
-          files: ./coverage.xml # Archivo generado en el paso anterior
+          files: ./coverage.xml
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
