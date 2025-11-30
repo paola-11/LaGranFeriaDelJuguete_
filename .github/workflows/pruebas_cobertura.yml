@@ -23,16 +23,19 @@ jobs:
         # Es necesario esperar unos segundos a que MySQL inicie completamente.
         run: sleep 15 
 
-      - name: 4. Cargar Base de Datos (Esquema y Datos)
-        # Ejecuta el script SQL en el contenedor 'granferia_db' usando credenciales de root
-        # Asegúrate de que tu archivo database.sql está en la raíz del proyecto.
+      - name: 4. Crear Base de Datos 'granferia' 🟢 NUEVO PASO
+        # Creamos la base de datos de forma explícita para evitar el error "Unknown database".
+        run: docker exec granferia_db sh -c 'exec mysql -uroot -proot -e "CREATE DATABASE granferia;"'
+
+      - name: 5. Cargar Base de Datos (Esquema y Datos)
+        # Ahora que la DB existe, cargamos el esquema SQL.
         run: docker exec granferia_db sh -c 'exec mysql -uroot -proot granferia < database.sql'
 
-      - name: 5. Ejecutar Pruebas PHPUnit y Generar Reporte de Cobertura
-        # Ejecuta PHPUnit dentro del contenedor 'web' y genera el reporte.
+      - name: 6. Ejecutar Pruebas PHPUnit y Generar Reporte de Cobertura
+        # Ejecuta PHPUnit dentro del contenedor 'web'.
         run: docker exec granferia_web phpunit --configuration phpunit.xml --coverage-clover coverage.xml
 
-      - name: 6. Subir Reporte a Codecov
+      - name: 7. Subir Reporte a Codecov
         uses: codecov/codecov-action@v3
         with:
           files: ./coverage.xml # Archivo generado en el paso anterior
