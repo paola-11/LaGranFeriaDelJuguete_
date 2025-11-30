@@ -19,16 +19,8 @@ jobs:
       - name: 2. Construir y Levantar Contenedores Docker
         run: docker compose -p granferia up -d --build
 
-      - name: Esperar a que MySQL esté listo
-        run: |
-          for i in {1..20}; do
-            if docker exec granferia_db mysqladmin ping -uroot -proot --silent; then
-              echo "MySQL listo!"
-              break
-            fi
-            echo "Esperando MySQL..."
-            sleep 3
-          done
+      - name: 3. Esperar que la Base de Datos esté lista
+        run: sleep 15
 
       - name: 4. Crear Base de Datos 'granferia'
         run: docker exec granferia_db sh -c 'exec mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS granferia;"'
@@ -43,7 +35,7 @@ jobs:
         run: docker cp granferia_web:/var/www/html/coverage.xml coverage.xml
 
       - name: 7. Subir Reporte a Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v3
         with:
           files: ./coverage.xml
           token: ${{ secrets.CODECOV_TOKEN }}
