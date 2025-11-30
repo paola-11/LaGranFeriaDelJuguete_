@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.6/phpunit.xsd"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
          colors="true">
 
     <testsuites>
@@ -9,21 +9,21 @@
         </testsuite>
     </testsuites>
 
-    <!-- Configuración de cobertura compatible con PHPUnit 9 -->
-    <filter>
-        <whitelist processUncoveredFiles="true">
+    <!-- Nueva sintaxis para cobertura en PHPUnit 10 -->
+    <source>
+        <include>
             <directory suffix=".php">funciones</directory>
+        </include>
 
-            <exclude>
-                <file>funciones/conexion.php</file>
-                <file>funciones/login.php</file>
-                <file>funciones/registro.php</file>
-            </exclude>
-        </whitelist>
-    </filter>
+        <exclude>
+            <file>funciones/conexion.php</file>
+            <file>funciones/login.php</file>
+            <file>funciones/registro.php</file>
+        </exclude>
+    </source>
 
     <logging>
-        <log type="coverage-clover" target="coverage.xml" />
+        <log type="coverage-clover" target="coverage.xml"/>
     </logging>
 
 </phpunit>
