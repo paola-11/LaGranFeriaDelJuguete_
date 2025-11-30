@@ -23,7 +23,7 @@ jobs:
         run: sleep 15
 
       - name: 4. Crear Base de Datos 'granferia'
-        run: docker exec granferia_db sh -c 'exec mysql -uroot -proot -e "CREATE DATABASE granferia;"'
+         run: docker exec granferia_db sh -c 'exec mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS granferia;"'
 
       - name: 5. Cargar Base de Datos (Esquema y Datos)
         run: docker exec granferia_db sh -c 'exec mysql -uroot -proot granferia < database.sql'
