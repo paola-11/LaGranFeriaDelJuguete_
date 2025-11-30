@@ -6,6 +6,8 @@ services:
     container_name: granferia_web
     ports:
       - "8080:80"
+    volumes:
+      - .:/var/www/html
     depends_on:
       - db
 

@@ -9,7 +9,6 @@
         </testsuite>
     </testsuites>
 
-    <!-- Nueva sintaxis para cobertura en PHPUnit 10 -->
     <source>
         <include>
             <directory suffix=".php">funciones</directory>
@@ -22,8 +21,9 @@
         </exclude>
     </source>
 
-    <logging>
-        <log type="coverage-clover" target="coverage.xml"/>
-    </logging>
-
-</phpunit>
+    <coverage>
+        <report>
+            <clover outputFile="coverage.xml"/>
+            </report>
+    </coverage>
+    </phpunit>
