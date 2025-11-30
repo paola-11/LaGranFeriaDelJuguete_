@@ -1,41 +1,40 @@
-# .github/workflows/pruebas_cobertura.yml
 name: Integración y Cobertura de Código
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+
     steps:
-      - name: 1. Clonar Repositorio
-        uses: actions/checkout@v4
+      - name: 1. Checkout del Código
+        uses: actions/checkout@v3
 
       - name: 2. Construir y Levantar Contenedores Docker
-        # Usa el Dockerfile modificado y el docker-compose.yml
         run: docker-compose up -d --build
 
-      - name: 3. Esperar que la Base de Datos (granferia_db) esté Lista
-        # Damos tiempo a MySQL para iniciar, crucial para la prueba de conexión
+      - name: 3. Esperar que la Base de Datos esté lista
+        # Es necesario esperar unos segundos a que MySQL inicie completamente.
         run: sleep 15 
 
-      - name: 4. Ejecutar Pruebas PHPUnit y Generar Reporte de Cobertura (coverage.xml)
-        # Comando para ejecutar las pruebas dentro del contenedor 'granferia_web'
-        run: docker exec granferia_web phpunit --configuration phpunit.xml
+      - name: 4. Cargar Base de Datos (Esquema y Datos)
+        # Ejecuta el script SQL en el contenedor 'granferia_db' usando credenciales de root
+        # Asegúrate de que tu archivo database.sql está en la raíz del proyecto.
+        run: docker exec granferia_db sh -c 'exec mysql -uroot -proot granferia < database.sql'
 
-      - name: 5. Subir Reporte a Codecov
-        # Usa la acción de Codecov para enviar el archivo generado
-        uses: codecov/codecov-action@v4
+      - name: 5. Ejecutar Pruebas PHPUnit y Generar Reporte de Cobertura
+        # Ejecuta PHPUnit dentro del contenedor 'web' y genera el reporte.
+        run: docker exec granferia_web phpunit --configuration phpunit.xml --coverage-clover coverage.xml
+
+      - name: 6. Subir Reporte a Codecov
+        uses: codecov/codecov-action@v3
         with:
-          files: ./coverage.xml 
-          # El token de Codecov DEBE estar configurado como secreto en GitHub
-          token: ${{ secrets.CODECOV_TOKEN }} 
+          files: ./coverage.xml # Archivo generado en el paso anterior
+          token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
-
-      - name: 6. Detener Contenedores (Limpieza)
-        # Detiene y elimina los contenedores creados
-        run: docker-compose down

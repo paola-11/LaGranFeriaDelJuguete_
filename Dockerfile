@@ -7,7 +7,7 @@ RUN docker-php-ext-install mysqli pdo pdo_mysql
 # --- INICIO DE CONFIGURACIÓN PARA PRUEBAS (CI/CD) ---
 
 # 1. Instalar dependencias de compilación y utilidades
-# ADVERTENCIA: Se añaden autoconf y build-essential para que PECL pueda compilar Xdebug
+# ¡IMPORTANTE! Se añaden autoconf y build-essential para que PECL pueda compilar Xdebug.
 RUN apt-get update && apt-get install -y \
     wget \
     git \
